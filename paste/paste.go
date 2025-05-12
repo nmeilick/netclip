@@ -126,23 +126,20 @@ func downloadMetadata(client *http.Client, serverURL string, id string, apiKey s
 	}
 	defer metaResp.Body.Close()
 
-	if metaResp.StatusCode != http.StatusOK {
+	switch metaResp.StatusCode {
+	case http.StatusOK: // OK
+	case http.StatusNotFound:
+		return meta, fmt.Errorf("clip not found: %s", id)
+	case http.StatusForbidden:
+		return meta, fmt.Errorf("access denied for clip: %s", id)
+	default:
 		// Try to parse error from response body
 		var errorResp response.Error
 
 		if err := json.NewDecoder(metaResp.Body).Decode(&errorResp); err == nil && errorResp.Error.Message != "" {
 			return meta, fmt.Errorf("server error: %s", errorResp.Error.Message)
 		}
-
-		// Fallback to status code based error
-		switch metaResp.StatusCode {
-		case http.StatusNotFound:
-			return meta, fmt.Errorf("clip not found: %s", id)
-		case http.StatusForbidden:
-			return meta, fmt.Errorf("access denied for clip: %s", id)
-		default:
-			return meta, fmt.Errorf("server returned error: %s", metaResp.Status)
-		}
+		return meta, fmt.Errorf("server returned error: %s", metaResp.Status)
 	}
 
 	// Successfully retrieved metadata
