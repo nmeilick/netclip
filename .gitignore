@@ -3,3 +3,4 @@ bin
 docs/swagger/
 examples/embedded_config.hcl
 .aider*
+common/version.go

@@ -8,7 +8,8 @@ import (
 
 // APIKey represents an API key configuration
 type APIKey struct {
-	Key      string         `hcl:"key,label"`
+	ID       string         `hcl:"id,label"`
+	Key      string         `hcl:"key"`
 	Prefixes []string       `hcl:"prefixes,optional"`
 	Admin    bool           `hcl:"admin,optional"`
 	Limits   *limits.Limits `hcl:"limits,block"`
