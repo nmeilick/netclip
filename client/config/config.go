@@ -10,8 +10,8 @@ import (
 // Default configuration constants
 const (
 	DefaultServerURL         = "https://localhost:8080"
-	DefaultConnectionTimeout = 20 * time.Second
-	DefaultMetadataTimeout   = 10 * time.Second
+	DefaultConnectionTimeout = 10 * time.Second
+	DefaultMetadataTimeout   = 15 * time.Second
 )
 
 // Config holds the client-specific configuration

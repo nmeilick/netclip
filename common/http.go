@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"time"
 
 	"github.com/nmeilick/netclip/client/config"
 )
@@ -21,7 +20,7 @@ func CreateHTTPClient(cfg *config.Config) *http.Client {
 		Proxy: http.ProxyFromEnvironment,
 		// Set connect timeout
 		DialContext: (&net.Dialer{
-			Timeout: 20 * time.Second,
+			Timeout: cfg.GetConnectionTimeout(),
 		}).DialContext,
 	}
 
@@ -64,7 +63,6 @@ func CreateHTTPClient(cfg *config.Config) *http.Client {
 	// Create client with transport and timeout
 	client := &http.Client{
 		Transport: transport,
-		Timeout:   cfg.GetConnectionTimeout(),
 	}
 
 	return client
