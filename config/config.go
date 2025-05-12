@@ -109,6 +109,13 @@ func LoadConfig(c *cli.Context) (*Config, string, error) {
 
 	path := c.String("config")
 	if path == "" {
+		if len(netclip.EmbeddedConfig) > 0 {
+			if err := hclsimple.Decode("embedded_config.hcl", netclip.EmbeddedConfig, nil, cfg); err != nil {
+				return nil, "<embedded>", fmt.Errorf("parsing failed: %w", err)
+			}
+			return cfg, "<embedded>", nil
+		}
+
 		locs := getConfigLocations()
 		for _, loc := range locs {
 			if stat, err := os.Stat(loc); err == nil && stat.Mode().IsRegular() {
@@ -118,18 +125,10 @@ func LoadConfig(c *cli.Context) (*Config, string, error) {
 		}
 
 		if path == "" {
-			if len(netclip.EmbeddedConfig) > 5 {
-				if err := hclsimple.Decode("embedded_config.hcl", netclip.EmbeddedConfig, nil, cfg); err != nil {
-					return nil, "<embedded>", fmt.Errorf("parsing failed: %w", err)
-				}
-				return cfg, "<embedded>", nil
-			}
-
 			lines := []string{"configuration not found. The following locations where checked"}
 			for _, loc := range locs {
 				lines = append(lines, "  - "+loc)
 			}
-			lines = append(lines, "  - <embedded config>")
 			return nil, "", errors.New(strings.Join(lines, "\n"))
 		}
 	}

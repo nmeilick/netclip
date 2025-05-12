@@ -43,9 +43,6 @@ version:
 build: ensure_default_config version swagger deps
 	mkdir -p $(BIN_DIR)
 	CGO_ENABLED=0 $(GOCMD) build $(BUILD_FLAGS) -o $(BINARY)$(SUFFIX) ./cmd/netclip
-	ln -sf netclip$(SUFFIX) $(BIN_DIR)/ncopy$(SUFFIX)
-	ln -sf netclip$(SUFFIX) $(BIN_DIR)/npaste$(SUFFIX)
-	ln -sf netclip$(SUFFIX) $(BIN_DIR)/nserve$(SUFFIX)
 
 clean:
 	$(GOCLEAN)
@@ -89,8 +86,35 @@ help:
 	@echo "  run        - Build and run the application"
 	@echo "  version    - Generate version information"
 	@echo "  ensure_default_config - Create empty default config if missing"
+	@echo "  dist       - Build binaries for multiple platforms (linux/amd64, linux/arm64, windows/amd64, darwin/amd64)"
 
 ensure_default_config:
 	@if [ ! -f "$(DEFAULT_CONFIG_FILE)" ]; then \
 		touch "$(DEFAULT_CONFIG_FILE)"; \
 	fi
+
+dist: ensure_default_config version swagger deps
+	@echo "Building for multiple platforms..."
+	@mkdir -p dist
+	
+	# Linux amd64
+	@echo "Building for Linux (amd64)..."
+	@mkdir -p dist/linux_amd64
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOCMD) build $(BUILD_FLAGS) -o dist/linux_amd64/netclip ./cmd/netclip
+	
+	# Linux arm64
+	@echo "Building for Linux (arm64)..."
+	@mkdir -p dist/linux_arm64
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GOCMD) build $(BUILD_FLAGS) -o dist/linux_arm64/netclip ./cmd/netclip
+	
+	# Windows amd64
+	@echo "Building for Windows (amd64)..."
+	@mkdir -p dist/windows_amd64
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOCMD) build $(BUILD_FLAGS) -o dist/windows_amd64/netclip.exe ./cmd/netclip
+	
+	# macOS amd64
+	@echo "Building for macOS (amd64)..."
+	@mkdir -p dist/darwin_amd64
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GOCMD) build $(BUILD_FLAGS) -o dist/darwin_amd64/netclip ./cmd/netclip
+	
+	@echo "All builds completed in the dist/ directory"
