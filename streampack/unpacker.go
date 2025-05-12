@@ -241,6 +241,19 @@ func (u *Unpacker) Unpack() error {
 			if u.verboseCallback != nil {
 				u.verboseCallback("Creating file", target)
 			}
+			
+			// Check if the file exists and is read-only
+			if stat, err := os.Lstat(target); err == nil && !stat.Mode().IsDir() {
+				// If file exists and is read-only, temporarily make it writable
+				if stat.Mode().Perm()&0200 == 0 {
+					if err := os.Chmod(target, stat.Mode().Perm()|0200); err != nil {
+						return fmt.Errorf("failed to make file writable %s: %w", target, err)
+					}
+					// Restore original permissions after we're done
+					defer os.Chmod(target, stat.Mode().Perm())
+				}
+			}
+			
 			file, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, platform.GetFileMode(header.Mode))
 			if err != nil {
 				return fmt.Errorf("failed to create file %s: %w", target, err)
