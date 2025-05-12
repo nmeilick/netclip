@@ -1,0 +1,5 @@
+*.sw?
+bin
+docs/swagger/
+examples/embedded_config.hcl
+.aider*

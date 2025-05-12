@@ -1,0 +1,95 @@
+name: Release Build
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-release:
+    name: Build for ${{ matrix.goos }}/${{ matrix.goarch }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+          - goos: windows
+            goarch: arm64
+          - goos: darwin
+            goarch: amd64
+          - goos: darwin
+            goarch: arm64
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for 'git describe' if Makefile uses it, and for 'git rev-parse --short HEAD'
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.1' # Matches toolchain version in go.mod
+
+      - name: Get Release Version
+        id: get_version
+        run: echo "RELEASE_VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV # Strips 'v' prefix from tag like v1.2.3
+
+      - name: Set executable suffix for Windows
+        if: matrix.goos == 'windows'
+        run: echo "EXECUTABLE_SUFFIX=.exe" >> $GITHUB_ENV
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          VERSION: ${{ env.RELEASE_VERSION }} # Overrides Makefile's VERSION for 'make version'
+          # COMMIT and BUILD_DATE will be determined by 'make version' using its shell commands
+        run: |
+          make version # Generates common/version.go
+          make build   # Builds the binary using GOOS, GOARCH, and common/version.go
+
+      - name: Prepare archive contents
+        id: prep_archive
+        run: |
+          ARTIFACT_DIR_BASE="netclip-${{ env.RELEASE_VERSION }}-${{ matrix.goos }}-${{ matrix.goarch }}"
+          ARTIFACT_DIR_PATH="release_artifacts/$ARTIFACT_DIR_BASE" # Staging directory for archive contents
+          mkdir -p $ARTIFACT_DIR_PATH
+
+          SOURCE_BINARY_PATH="cmd/netclip/bin/netclip${{ env.EXECUTABLE_SUFFIX }}"
+          DEST_BINARY_PATH="$ARTIFACT_DIR_PATH/netclip${{ env.EXECUTABLE_SUFFIX }}"
+
+          echo "Copying $SOURCE_BINARY_PATH to $DEST_BINARY_PATH"
+          cp $SOURCE_BINARY_PATH $DEST_BINARY_PATH
+
+          echo "Copying LICENSE"
+          cp LICENSE $ARTIFACT_DIR_PATH/
+          
+          if [ -f README.md ]; then
+            echo "Copying README.md"
+            cp README.md $ARTIFACT_DIR_PATH/
+          fi
+
+          if [ -f examples/netclip.hcl ]; then
+            echo "Copying examples/netclip.hcl"
+            cp examples/netclip.hcl $ARTIFACT_DIR_PATH/
+          fi
+          
+          echo "ARTIFACT_DIR_BASE=$ARTIFACT_DIR_BASE" >> $GITHUB_OUTPUT
+          echo "ARTIFACT_PARENT_DIR=release_artifacts" >> $GITHUB_OUTPUT
+
+      - name: Create archive
+        run: |
+          ARCHIVE_NAME="netclip-${{ env.RELEASE_VERSION }}-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz"
+          tar -C ${{ steps.prep_archive.outputs.ARTIFACT_PARENT_DIR }} -czvf $ARCHIVE_NAME ${{ steps.prep_archive.outputs.ARTIFACT_DIR_BASE }}
+          echo "ARCHIVE_PATH=$ARCHIVE_NAME" >> $GITHUB_ENV
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.ARCHIVE_PATH }}
