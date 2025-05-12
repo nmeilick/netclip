@@ -120,20 +120,20 @@ type CacheEntry struct {
 func (c *Cache) ListEntriesWithTime(table string) ([]CacheEntry, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	
+
 	// Check if table exists
 	if !c.tables[table] {
 		// Try to ensure the table exists
 		if err := c.ensureTable(table); err != nil {
 			return nil, err
 		}
-		
+
 		// If it still doesn't exist after ensuring, it's empty
 		if !c.tables[table] {
 			return []CacheEntry{}, nil
 		}
 	}
-	
+
 	// Query all entries, ordered by last_accessed descending (newest first)
 	query := fmt.Sprintf("SELECT key, value, created, last_accessed FROM %q ORDER BY last_accessed DESC", table)
 	rows, err := c.db.Query(query)
@@ -141,7 +141,7 @@ func (c *Cache) ListEntriesWithTime(table string) ([]CacheEntry, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	var result []CacheEntry
 	for rows.Next() {
 		var entry CacheEntry
@@ -150,7 +150,7 @@ func (c *Cache) ListEntriesWithTime(table string) ([]CacheEntry, error) {
 		}
 		result = append(result, entry)
 	}
-	
+
 	return result, nil
 }
 
@@ -158,20 +158,20 @@ func (c *Cache) ListEntriesWithTime(table string) ([]CacheEntry, error) {
 func (c *Cache) ListEntries(table string) (map[string]string, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	
+
 	// Check if table exists
 	if !c.tables[table] {
 		// Try to ensure the table exists
 		if err := c.ensureTable(table); err != nil {
 			return nil, err
 		}
-		
+
 		// If it still doesn't exist after ensuring, it's empty
 		if !c.tables[table] {
 			return make(map[string]string), nil
 		}
 	}
-	
+
 	// Query all entries
 	query := fmt.Sprintf("SELECT key, value FROM %q", table)
 	rows, err := c.db.Query(query)
@@ -179,7 +179,7 @@ func (c *Cache) ListEntries(table string) (map[string]string, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	
+
 	result := make(map[string]string)
 	for rows.Next() {
 		var key, value string
@@ -188,7 +188,7 @@ func (c *Cache) ListEntries(table string) (map[string]string, error) {
 		}
 		result[key] = value
 	}
-	
+
 	return result, nil
 }
 

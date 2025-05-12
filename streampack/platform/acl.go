@@ -15,11 +15,11 @@ func GetACL(path string) ([]byte, error) {
 	if !ACLSupported() {
 		return nil, nil
 	}
-	
+
 	if IsWindows() {
 		return getWindowsACL(path)
 	}
-	
+
 	return getUnixACL(path)
 }
 
@@ -28,11 +28,11 @@ func SetACL(path string, aclData []byte) error {
 	if !ACLSupported() || len(aclData) == 0 {
 		return nil
 	}
-	
+
 	if IsWindows() {
 		return setWindowsACL(path, aclData)
 	}
-	
+
 	return setUnixACL(path, aclData)
 }
 
@@ -41,15 +41,15 @@ func getWindowsACL(path string) ([]byte, error) {
 	if runtime.GOOS != "windows" {
 		return nil, fmt.Errorf("not supported on this platform")
 	}
-	
+
 	// This is a placeholder - actual implementation would use Windows API
 	// to serialize the security descriptor
-	
+
 	// For a complete implementation, you would use:
 	// - windows.GetNamedSecurityInfo to get the security descriptor
 	// - windows.ConvertSecurityDescriptorToStringSecurityDescriptor to convert to SDDL
 	// - Then store the SDDL string as bytes
-	
+
 	return nil, fmt.Errorf("Windows ACL serialization not implemented")
 }
 
@@ -58,15 +58,15 @@ func setWindowsACL(path string, aclData []byte) error {
 	if runtime.GOOS != "windows" {
 		return fmt.Errorf("not supported on this platform")
 	}
-	
+
 	// This is a placeholder - actual implementation would use Windows API
 	// to deserialize and apply the security descriptor
-	
+
 	// For a complete implementation, you would:
 	// - Convert the stored bytes back to an SDDL string
 	// - Use windows.ConvertStringSecurityDescriptorToSecurityDescriptor to convert from SDDL
 	// - Use windows.SetNamedSecurityInfo to apply the security descriptor
-	
+
 	return fmt.Errorf("Windows ACL deserialization not implemented")
 }
 
@@ -75,13 +75,13 @@ func getUnixACL(path string) ([]byte, error) {
 	if runtime.GOOS == "windows" {
 		return nil, fmt.Errorf("not supported on this platform")
 	}
-	
+
 	// This is a placeholder - actual implementation would use platform-specific
 	// tools to get and serialize the ACL
-	
+
 	// For Linux, you might use the "getfacl" command or a library that wraps
 	// the acl_get_file function from libacl
-	
+
 	return nil, fmt.Errorf("Unix ACL serialization not implemented")
 }
 
@@ -90,12 +90,12 @@ func setUnixACL(path string, aclData []byte) error {
 	if runtime.GOOS == "windows" {
 		return fmt.Errorf("not supported on this platform")
 	}
-	
+
 	// This is a placeholder - actual implementation would use platform-specific
 	// tools to deserialize and apply the ACL
-	
+
 	// For Linux, you might use the "setfacl" command or a library that wraps
 	// the acl_set_file function from libacl
-	
+
 	return fmt.Errorf("Unix ACL deserialization not implemented")
 }

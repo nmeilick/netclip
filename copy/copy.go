@@ -496,7 +496,7 @@ func runCopy(c *cli.Context) error {
 
 	result := common.CombineIDAndKey(id, password)
 
-	showQRCode := true
+	var showQRCode bool
 	if c.IsSet("no-qr") {
 		showQRCode = !c.Bool("no-qr")
 	} else {

@@ -3,7 +3,7 @@ package platform
 import (
 	"fmt"
 	"runtime"
-	
+
 	"github.com/pkg/xattr"
 )
 
@@ -18,15 +18,15 @@ func GetXattrs(path string) (map[string][]byte, error) {
 	if !XattrSupported() {
 		return nil, nil
 	}
-	
+
 	attrs := make(map[string][]byte)
-	
+
 	// List all attribute names
 	names, err := xattr.List(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list xattrs: %w", err)
 	}
-	
+
 	// Get each attribute value
 	for _, name := range names {
 		value, err := xattr.Get(path, name)
@@ -36,7 +36,7 @@ func GetXattrs(path string) (map[string][]byte, error) {
 		}
 		attrs[name] = value
 	}
-	
+
 	return attrs, nil
 }
 
@@ -45,15 +45,15 @@ func SetXattrs(path string, attrs map[string][]byte) error {
 	if !XattrSupported() || len(attrs) == 0 {
 		return nil
 	}
-	
+
 	var firstErr error
-	
+
 	for name, value := range attrs {
 		err := xattr.Set(path, name, value)
 		if err != nil && firstErr == nil {
 			firstErr = fmt.Errorf("failed to set xattr %s: %w", name, err)
 		}
 	}
-	
+
 	return firstErr
 }

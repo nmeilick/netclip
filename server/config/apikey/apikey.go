@@ -14,7 +14,6 @@ type APIKey struct {
 	Limits   *limits.Limits `hcl:"limits,block"`
 }
 
-
 // Normalize sets default values for vital settings that haven't been set
 func (ak *APIKey) Normalize() {
 	// No default values needed for API keys
@@ -43,4 +42,3 @@ func (ak *APIKey) Validate() error {
 
 	return nil
 }
-

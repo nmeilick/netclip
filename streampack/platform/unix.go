@@ -17,27 +17,27 @@ func GetFileOwner(path string) (uid, gid int, uidName, gidName string, err error
 	if err != nil {
 		return 0, 0, "", "", err
 	}
-	
+
 	stat, ok := info.Sys().(*syscall.Stat_t)
 	if !ok {
 		return 0, 0, "", "", fmt.Errorf("failed to get file stats")
 	}
-	
+
 	uid = int(stat.Uid)
 	gid = int(stat.Gid)
-	
+
 	// Try to get user name
 	u, err := user.LookupId(strconv.Itoa(uid))
 	if err == nil {
 		uidName = u.Username
 	}
-	
+
 	// Try to get group name
 	g, err := user.LookupGroupId(strconv.Itoa(gid))
 	if err == nil {
 		gidName = g.Name
 	}
-	
+
 	return uid, gid, uidName, gidName, nil
 }
 

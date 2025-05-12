@@ -46,7 +46,8 @@ func NewManager(cfg *config.Config, logger zerolog.Logger) (*Manager, error) {
 		storagePath := os.Getenv("NETCLIP_STORAGE_PATH")
 		if storagePath == "" {
 			// Try to get a reasonable default if environment variable isn't set
-			storagePath, err := defaultCertCacheDir()
+			var err error
+			storagePath, err = defaultCertCacheDir()
 			if err != nil {
 				return nil, fmt.Errorf("failed to determine base directory for relative cache path: %w", err)
 			}

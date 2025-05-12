@@ -35,7 +35,7 @@ type Config struct {
 
 	// DisableHTTPServer disables the standalone HTTP server for challenges
 	DisableHTTPServer bool `hcl:"disable_http_server,optional"`
-	
+
 	// Parsed durations
 	parsedRenewBefore time.Duration
 }
@@ -43,7 +43,7 @@ type Config struct {
 // Normalize sets default values for ACME configuration
 func (ac *Config) Normalize() error {
 	var err error
-	
+
 	// Parse renew before duration
 	if ac.RenewBefore != "" {
 		ac.parsedRenewBefore, err = duration.Parse(ac.RenewBefore)
@@ -51,7 +51,7 @@ func (ac *Config) Normalize() error {
 			return fmt.Errorf("invalid renew_before: %w", err)
 		}
 	}
-	
+
 	// Set default renewal period if not specified
 	if ac.parsedRenewBefore <= 0 {
 		ac.parsedRenewBefore = 30 * 24 * time.Hour // 30 days

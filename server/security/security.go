@@ -26,7 +26,7 @@ type SecurityConfig struct {
 
 	// Cache-Control
 	CacheControl string `hcl:"cache_control,optional"`
-	
+
 	// Parsed durations
 	parsedHSTSMaxAge time.Duration
 }
@@ -44,7 +44,7 @@ func DefaultConfig() *SecurityConfig {
 // Normalize sets default values for vital settings that haven't been set
 func (cfg *SecurityConfig) Normalize() error {
 	var err error
-	
+
 	// Parse HSTS max age
 	if cfg.HSTSMaxAge != "" {
 		cfg.parsedHSTSMaxAge, err = duration.Parse(cfg.HSTSMaxAge)
@@ -52,7 +52,7 @@ func (cfg *SecurityConfig) Normalize() error {
 			return fmt.Errorf("invalid hsts_max_age: %w", err)
 		}
 	}
-	
+
 	// Set default HSTS settings
 	if cfg.parsedHSTSMaxAge <= 0 {
 		cfg.parsedHSTSMaxAge = DefaultHSTSMaxAge

@@ -22,7 +22,7 @@ type PasswordVerificationParams struct {
 // DefaultVerificationParams returns the default parameters for password verification
 func DefaultVerificationParams() PasswordVerificationParams {
 	return PasswordVerificationParams{
-		Iterations: 1,        // Low iteration count for quick verification
+		Iterations: 1,         // Low iteration count for quick verification
 		Memory:     64 * 1024, // 64MB
 		Threads:    4,
 		KeyLength:  32,
@@ -36,17 +36,17 @@ func GenerateVerificationData(password string, params PasswordVerificationParams
 	if _, err := rand.Read(salt); err != nil {
 		return nil, nil, fmt.Errorf("failed to generate salt: %w", err)
 	}
-	
+
 	// Derive verification key using Argon2id
 	verificationKey = argon2.IDKey(
-		[]byte(password), 
-		salt, 
-		params.Iterations, 
-		params.Memory, 
-		params.Threads, 
+		[]byte(password),
+		salt,
+		params.Iterations,
+		params.Memory,
+		params.Threads,
 		params.KeyLength,
 	)
-	
+
 	return salt, verificationKey, nil
 }
 
@@ -54,14 +54,14 @@ func GenerateVerificationData(password string, params PasswordVerificationParams
 func VerifyPassword(password string, salt, storedKey []byte, params PasswordVerificationParams) bool {
 	// Derive verification key using same parameters
 	testKey := argon2.IDKey(
-		[]byte(password), 
-		salt, 
-		params.Iterations, 
-		params.Memory, 
-		params.Threads, 
+		[]byte(password),
+		salt,
+		params.Iterations,
+		params.Memory,
+		params.Threads,
 		params.KeyLength,
 	)
-	
+
 	// Use constant-time comparison to prevent timing attacks
 	return bytes.Equal(testKey, storedKey)
 }

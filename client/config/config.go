@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	"time"
-	
+
 	"github.com/xhit/go-str2duration/v2"
 )
 
@@ -31,7 +31,7 @@ type Config struct {
 	ConnectionTimeout string `hcl:"connection_timeout,optional"`
 	MetadataTimeout   string `hcl:"metadata_timeout,optional"`
 	DisableQRCode     bool   `hcl:"disable_qr_code,optional"`
-	
+
 	// Parsed durations
 	parsedConnectionTimeout time.Duration
 	parsedMetadataTimeout   time.Duration
@@ -47,7 +47,7 @@ func DefaultConfig() *Config {
 		PasswordLength:    16,    // Default password length
 		IDLength:          11,    // Default ID length
 		UpdateTokenLength: 15,    // Default update token length
-		
+
 		parsedConnectionTimeout: DefaultConnectionTimeout,
 		parsedMetadataTimeout:   DefaultMetadataTimeout,
 	}
@@ -56,7 +56,7 @@ func DefaultConfig() *Config {
 // Normalize sets default values for vital settings that haven't been set
 func (c *Config) Normalize() error {
 	var err error
-	
+
 	// Set default server URL if not specified
 	if c.ServerURL == "" {
 		c.ServerURL = DefaultServerURL

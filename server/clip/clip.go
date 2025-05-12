@@ -298,7 +298,6 @@ func (m *Manager) HandleUploadClip(c *gin.Context) {
 		}
 	}
 
-
 	meta := response.ClipMetadata{
 		ID:        id,
 		CreatedAt: time.Now(),

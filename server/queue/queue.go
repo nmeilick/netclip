@@ -31,7 +31,7 @@ type QueueConfig struct {
 
 	// MaxWaitTime is the maximum time a request can wait in the queue
 	MaxWaitTime string `json:"max_wait_time,omitempty" hcl:"max_wait_time,optional"`
-	
+
 	// Parsed durations
 	parsedMaxWaitTime time.Duration
 }
@@ -79,7 +79,7 @@ func NewConfig(options ...ConfigOption) *QueueConfig {
 // Normalize sets default values for vital settings that haven't been set
 func (qc *QueueConfig) Normalize() error {
 	var err error
-	
+
 	// Set default values for main queue
 	if qc.MaxConcurrent <= 0 {
 		qc.MaxConcurrent = DefaultMaxConcurrent
@@ -87,7 +87,7 @@ func (qc *QueueConfig) Normalize() error {
 	if qc.MaxQueueSize <= 0 {
 		qc.MaxQueueSize = DefaultMaxQueueSize
 	}
-	
+
 	// Parse max wait time
 	if qc.MaxWaitTime != "" {
 		qc.parsedMaxWaitTime, err = duration.Parse(qc.MaxWaitTime)
@@ -98,7 +98,7 @@ func (qc *QueueConfig) Normalize() error {
 	if qc.parsedMaxWaitTime <= 0 {
 		qc.parsedMaxWaitTime = DefaultMaxWaitTime
 	}
-	
+
 	return qc.Validate()
 }
 

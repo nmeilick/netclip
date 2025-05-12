@@ -143,7 +143,7 @@ func FormatError(err error) string {
 	if err == nil {
 		return ""
 	}
-	
+
 	// Windows-specific formatting will be handled in windows.go
 	return err.Error()
 }
@@ -175,7 +175,7 @@ func IsExecutable(path string) bool {
 	if err != nil {
 		return false
 	}
-	
+
 	if IsWindows() {
 		// On Windows, check file extension
 		ext := filepath.Ext(path)
@@ -187,7 +187,7 @@ func IsExecutable(path string) bool {
 		}
 		return false
 	}
-	
+
 	// On Unix, check executable bit
 	return info.Mode()&0111 != 0
 }
@@ -202,19 +202,19 @@ func ExpandPath(path string) (string, error) {
 	if len(path) == 0 || path[0] != '~' {
 		return path, nil
 	}
-	
+
 	home, err := GetHomeDir()
 	if err != nil {
 		return "", err
 	}
-	
+
 	if len(path) == 1 {
 		return home, nil
 	}
-	
+
 	if path[1] == filepath.Separator {
 		return filepath.Join(home, path[2:]), nil
 	}
-	
+
 	return path, fmt.Errorf("invalid path format: %s", path)
 }

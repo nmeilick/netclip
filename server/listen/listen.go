@@ -34,7 +34,7 @@ type Config struct {
 
 	// TLS configuration
 	TLS *TLSConfig `hcl:"tls,block"`
-	
+
 	// Parsed durations (kept for backward compatibility)
 	parsedReadTimeout       time.Duration
 	parsedWriteTimeout      time.Duration
@@ -59,7 +59,7 @@ type TimeoutsConfig struct {
 
 	// GracefulTimeout is the duration for which the server gracefully waits for existing connections to finish
 	GracefulTimeout string `hcl:"graceful,optional"`
-	
+
 	// Parsed durations
 	parsedReadTimeout       time.Duration
 	parsedWriteTimeout      time.Duration
@@ -109,7 +109,7 @@ func (cfg *Config) Normalize() error {
 	if cfg.Port <= 0 {
 		cfg.Port = DefaultPort
 	}
-	
+
 	// Initialize timeouts if not set
 	if cfg.Timeouts == nil {
 		cfg.Timeouts = &TimeoutsConfig{
@@ -120,24 +120,24 @@ func (cfg *Config) Normalize() error {
 			GracefulTimeout:   duration.String(DefaultGracefulTimeout),
 		}
 	}
-	
+
 	// Initialize TLS if not set
 	if cfg.TLS == nil {
 		cfg.TLS = &TLSConfig{}
 	}
-	
+
 	// Normalize timeouts
 	if err := cfg.normalizeTimeouts(); err != nil {
 		return err
 	}
-	
+
 	return cfg.Validate()
 }
 
 // normalizeTimeouts parses and sets default values for timeouts
 func (cfg *Config) normalizeTimeouts() error {
 	var err error
-	
+
 	// Parse durations from Timeouts block
 	if cfg.Timeouts.ReadTimeout != "" {
 		cfg.Timeouts.parsedReadTimeout, err = duration.Parse(cfg.Timeouts.ReadTimeout)
@@ -148,7 +148,7 @@ func (cfg *Config) normalizeTimeouts() error {
 	if cfg.Timeouts.parsedReadTimeout <= 0 {
 		cfg.Timeouts.parsedReadTimeout = DefaultReadTimeout
 	}
-	
+
 	if cfg.Timeouts.WriteTimeout != "" {
 		cfg.Timeouts.parsedWriteTimeout, err = duration.Parse(cfg.Timeouts.WriteTimeout)
 		if err != nil {
@@ -158,7 +158,7 @@ func (cfg *Config) normalizeTimeouts() error {
 	if cfg.Timeouts.parsedWriteTimeout <= 0 {
 		cfg.Timeouts.parsedWriteTimeout = DefaultWriteTimeout
 	}
-	
+
 	if cfg.Timeouts.IdleTimeout != "" {
 		cfg.Timeouts.parsedIdleTimeout, err = duration.Parse(cfg.Timeouts.IdleTimeout)
 		if err != nil {
@@ -168,7 +168,7 @@ func (cfg *Config) normalizeTimeouts() error {
 	if cfg.Timeouts.parsedIdleTimeout <= 0 {
 		cfg.Timeouts.parsedIdleTimeout = DefaultIdleTimeout
 	}
-	
+
 	if cfg.Timeouts.ReadHeaderTimeout != "" {
 		cfg.Timeouts.parsedReadHeaderTimeout, err = duration.Parse(cfg.Timeouts.ReadHeaderTimeout)
 		if err != nil {
@@ -178,7 +178,7 @@ func (cfg *Config) normalizeTimeouts() error {
 	if cfg.Timeouts.parsedReadHeaderTimeout <= 0 {
 		cfg.Timeouts.parsedReadHeaderTimeout = DefaultHeaderTimeout
 	}
-	
+
 	if cfg.Timeouts.GracefulTimeout != "" {
 		cfg.Timeouts.parsedGracefulTimeout, err = duration.Parse(cfg.Timeouts.GracefulTimeout)
 		if err != nil {
@@ -188,14 +188,14 @@ func (cfg *Config) normalizeTimeouts() error {
 	if cfg.Timeouts.parsedGracefulTimeout <= 0 {
 		cfg.Timeouts.parsedGracefulTimeout = DefaultGracefulTimeout
 	}
-	
+
 	// Set the main config's parsed durations for backward compatibility
 	cfg.parsedReadTimeout = cfg.Timeouts.parsedReadTimeout
 	cfg.parsedWriteTimeout = cfg.Timeouts.parsedWriteTimeout
 	cfg.parsedIdleTimeout = cfg.Timeouts.parsedIdleTimeout
 	cfg.parsedReadHeaderTimeout = cfg.Timeouts.parsedReadHeaderTimeout
 	cfg.parsedGracefulTimeout = cfg.Timeouts.parsedGracefulTimeout
-	
+
 	return nil
 }
 

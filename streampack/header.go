@@ -21,7 +21,7 @@ const (
 	TypeRaw = "raw"
 )
 
-// PasswordVerificationHeader containts info to quickly verify the password
+// PasswordVerificationHeader contains info to quickly verify the password
 type PasswordVerificationHeader struct {
 	Salt            []byte `json:"s,omitempty"` // Random salt
 	VerificationKey []byte `json:"v,omitempty"` // Derived verification key
