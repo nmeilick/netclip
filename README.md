@@ -30,7 +30,8 @@ Extract the archive and place the `netclip` binary in a directory included in yo
 
 ### Setup Symlinks (Optional but Recommended)
 
-For convenience, you can create symbolic links named `ncopy`, `npaste`, and `nserve` pointing to the main `netclip` binary. This allows you to use the intuitive command names directly.
+For convenience, you can create symbolic links named `ncopy`, `npaste`, and `nserve` pointing to the
+main `netclip` binary. This allows you to use the intuitive command names directly.
 
 Run the following command from the directory containing the `netclip` binary:
 
@@ -38,7 +39,8 @@ Run the following command from the directory containing the `netclip` binary:
 ./netclip setup links
 ```
 
-This will create the necessary symlinks in the same directory.
+This will create the necessary symlinks in the same directory. On Windows, the created links are
+`ncopy.exe`, `npaste.exe`, and `nserve.exe`.
 
 ## Usage
 

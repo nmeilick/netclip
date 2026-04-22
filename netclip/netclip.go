@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/nmeilick/netclip"
+	"github.com/nmeilick/netclip/common"
 	"github.com/urfave/cli/v2"
 )
 
@@ -47,8 +49,8 @@ func runSetupLinks(c *cli.Context) error {
 	// Get the base name of the executable
 	execName := filepath.Base(execPath)
 
-	// Define the symlinks to create
-	symlinks := []string{"ncopy", "npaste", "nserver"}
+	// Define the symlinks to create for the current platform.
+	symlinks := common.SetupLinkNames(runtime.GOOS)
 
 	// Create each symlink
 	for _, link := range symlinks {
